@@ -175,7 +175,7 @@ describe("ASM to Machine Code", () => {
   });
 
   it("call label", () => {
-    const labelTable = {15: 'myLabel'}
+    const labelTable = {15: 'myLabel'};
     const op = 'call'; const operand1 = labelOperand('myLabel');
     const result = new ASMInstruction(op, operand1);
     const expected = '11101000000000000000000000001111';
@@ -189,9 +189,10 @@ describe("ASM to Machine Code", () => {
   });
 
   it(".LABEL", () => {
-    const op = 'label'; const operand1 = labelOperand(15);
+    const labelTable = {15: 'myLabel'};
+    const op = 'label'; const operand1 = labelOperand('myLabel');
     const result = new ASMInstruction(op, operand1);
     const expected = '00000000000000000000000000001111';
-    expect(result.toMachineCode()).to.equal(expected);
+    expect(result.toMachineCode(labelTable)).to.equal(expected);
   });
 });

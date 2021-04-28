@@ -382,7 +382,7 @@ function parseAss(assembly, LabelTable) {
         operand1 = operand;
       else
         operand2 = operand;
-    }//console.log(op, operand1, operand2);
+    }
     instArray.push(new ASMInstruction(op, operand1, operand2));
   }
   return instArray;
