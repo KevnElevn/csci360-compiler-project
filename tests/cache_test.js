@@ -16,7 +16,7 @@ describe("cache", () => {
             expect(cache.getDword({ address: address })).to.equal("00000000000000000000000000000001");
         });
         // This test will need to be altered when memory object is created
-        // check memory.get == what I want 
+        // check memory.get == what I want
         it("Should write through to memory", () => {
             const pm = new PhysicalMemory(1024, 4);
             const es = new ExternalStorage(8192);
@@ -29,8 +29,8 @@ describe("cache", () => {
             const cache = new Cache({ nway: 1, size: 8, k: 2, memory: vm, bits: 12 });
             const address = '111111111100';
             cache.setDword({ address: address, data: '10000000000000000000000000000001', memwrite: true });
-            console.log("addressLLL", address)
-            console.log(cache.memory.physicalMemory.storage)
+            //console.log("addressLLL", address)
+            //console.log(cache.memory.physicalMemory.storage)
             expect(cache.getDword({ address: address })).to.equal(cache.memory.getDword(0, 4092));
 
         });
@@ -51,7 +51,7 @@ describe("cache", () => {
             const address = '111111111100';
             // initialize different data that maps to the same set, index, and offset
             const data = '00000000000000000000000000000001';
-            // write the data sequentially 
+            // write the data sequentially
             cache.setDword({ address: address, data: data, memwrite: true });
             // verify that the old data is not there
             expect(cache.isCacheHit(address)).to.not.equal(-1); // original address should be replaced
@@ -75,7 +75,7 @@ describe("cache", () => {
             // initialize different data that maps to the same set, index, and offset
             const data = '00000000000000000000000000000001';
             const otherData = '01000000000000000000000000000010';
-            // write the data sequentially 
+            // write the data sequentially
             cache.setDword({ address: address, data: data, memwrite: true });
             cache.setDword({ address: otherAddress, data: otherData, memwrite: true });
             // verify that the old data is not there

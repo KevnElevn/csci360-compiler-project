@@ -98,52 +98,59 @@ describe("ASM to Machine Code", () => {
   });
 
   it("jmp label", () => {
-    const op = 'jmp'; const operand1 = labelOperand(0);
+    const labelTable = {16: 'myLabel'};
+    const op = 'jmp'; const operand1 = labelOperand('myLabel');
     const result = new ASMInstruction(op, operand1);
-    const expected = '11101001000000000000000000000000';
-    expect(result.toMachineCode()).to.equal(expected);
+    const expected = '11101001000000000000000000010000';
+    expect(result.toMachineCode(labelTable)).to.equal(expected);
   });
 
   it("jg label", () => {
-    const op = 'jg'; const operand1 = labelOperand(15);
+    const labelTable = {15: 'myLabel'};
+    const op = 'jg'; const operand1 = labelOperand('myLabel');
     const result = new ASMInstruction(op, operand1);
     const expected = '10001111000000000000000000001111';
-    expect(result.toMachineCode()).to.equal(expected);
+    expect(result.toMachineCode(labelTable)).to.equal(expected);
   });
 
   it("jl label", () => {
-    const op = 'jl'; const operand1 = labelOperand(15);
+    const labelTable = {15: 'myLabel'};
+    const op = 'jl'; const operand1 = labelOperand('myLabel');
     const result = new ASMInstruction(op, operand1);
     const expected = '10001100000000000000000000001111';
-    expect(result.toMachineCode()).to.equal(expected);
+    expect(result.toMachineCode(labelTable)).to.equal(expected);
   });
 
   it("je label", () => {
-    const op = 'je'; const operand1 = labelOperand(15);
+    const labelTable = {15: 'myLabel'};
+    const op = 'je'; const operand1 = labelOperand('myLabel');
     const result = new ASMInstruction(op, operand1);
     const expected = '10000100000000000000000000001111';
-    expect(result.toMachineCode()).to.equal(expected);
+    expect(result.toMachineCode(labelTable)).to.equal(expected);
   });
 
   it("jge label", () => {
-    const op = 'jge'; const operand1 = labelOperand(15);
+    const labelTable = {15: 'myLabel'};
+    const op = 'jge'; const operand1 = labelOperand('myLabel');
     const result = new ASMInstruction(op, operand1);
     const expected = '10001101000000000000000000001111';
-    expect(result.toMachineCode()).to.equal(expected);
+    expect(result.toMachineCode(labelTable)).to.equal(expected);
   });
 
   it("jle label", () => {
-    const op = 'jle'; const operand1 = labelOperand(15);
+    const labelTable = {15: 'myLabel'};
+    const op = 'jle'; const operand1 = labelOperand('myLabel');
     const result = new ASMInstruction(op, operand1);
     const expected = '10001110000000000000000000001111';
-    expect(result.toMachineCode()).to.equal(expected);
+    expect(result.toMachineCode(labelTable)).to.equal(expected);
   });
 
   it("jne label", () => {
-    const op = 'jne'; const operand1 = labelOperand(15);
+    const labelTable = {15: 'myLabel'};
+    const op = 'jne'; const operand1 = labelOperand('myLabel');
     const result = new ASMInstruction(op, operand1);
     const expected = '10000101000000000000000000001111';
-    expect(result.toMachineCode()).to.equal(expected);
+    expect(result.toMachineCode(labelTable)).to.equal(expected);
   });
 
   it("push reg", () => {
@@ -168,10 +175,11 @@ describe("ASM to Machine Code", () => {
   });
 
   it("call label", () => {
-    const op = 'call'; const operand1 = labelOperand(15);
+    const labelTable = {15: 'myLabel'}
+    const op = 'call'; const operand1 = labelOperand('myLabel');
     const result = new ASMInstruction(op, operand1);
     const expected = '11101000000000000000000000001111';
-    expect(result.toMachineCode()).to.equal(expected);
+    expect(result.toMachineCode(labelTable)).to.equal(expected);
   });
 
   it("ret", () => {

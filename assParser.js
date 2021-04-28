@@ -82,8 +82,8 @@ function toBinaryOperand(operand) {
 }
 
 function findInstructionNumber(LabelTable, labelName) {
-  keys = Object.keys(LabelTable);
-  for(i=0; i<keys.length; i++){
+  const keys = Object.keys(LabelTable);
+  for(let i=0; i<keys.length; i++){
     if(LabelTable[keys[i]] === labelName)
       return keys[i].toString(10);
   }
@@ -248,13 +248,13 @@ class ASMInstruction {
         break;
       }
       case 'je':{
-        this.operand1.value = findInstructionNumber(this.operand1.value);
+        this.operand1.value = findInstructionNumber(LabelTable, this.operand1.value);
         const instAddress = toBinaryOperand(this.operand1);
         machineCode = `10000100${instAddress}`;
         break;
       }
       case 'jge':{
-        this.operand1.value = findInstructionNumber(LabelTable, this.operand1.value);// console.log(this.operand1.value);
+        this.operand1.value = findInstructionNumber(LabelTable, this.operand1.value);
         const instAddress = toBinaryOperand(this.operand1);
         machineCode = `10001101${instAddress}`;
         break;
@@ -290,12 +290,13 @@ class ASMInstruction {
       case 'call':{
         for(let i=0; i<this.operand1.value.length; i++){
           if(this.operand1.value[i] === '('){
-            this.operand1.value = this.operand1.value.slice(0, i+1)+ ')'
+            this.operand1.value = this.operand1.value.slice(0, i+1) + ')';
           }
         }
         this.operand1.value = findInstructionNumber(LabelTable, this.operand1.value);
+        this.operand1.value = Number(this.operand1.value);
         const instAddress = this.operand1.value.toString(2).padStart(24, '0');
-        machineCode = `11101000${instAddress}`; console.log(machineCode);
+        machineCode = `11101000${instAddress}`;
         break;
       }
       case 'ret':{
@@ -343,8 +344,9 @@ function parseAss(assembly, LabelTable) {
       op = line[0];
     else { //It is a label e.g. .LABEL: or function():
       op = 'label';
-      operand1 = labelOperand(i);
-      LabelTable[i] = line[0].slice(0,line[0].length-1);  //Record the instruction number and label name
+      const labelName = line[0].slice(0,line[0].length-1);
+      operand1 = labelOperand(labelName);
+      LabelTable[i] = labelName;  //Record the label name and line number
     }
     for(let j = 1; j<line.length; j++){
       if(line[j].includes(','))
