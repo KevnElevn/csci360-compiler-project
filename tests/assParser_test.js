@@ -154,9 +154,9 @@ describe("ASM to Machine Code", () => {
   });
 
   it("push reg", () => {
-    const op = 'push'; const operand1 = registerOperand('edx');
+    const op = 'push'; const operand1 = registerOperand('rbp');
     const result = new ASMInstruction(op, operand1);
-    const expected = '00000110000000110000000000000000';
+    const expected = '00000110000001110000000000000000';
     expect(result.toMachineCode()).to.equal(expected);
   });
 

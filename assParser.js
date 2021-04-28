@@ -306,8 +306,15 @@ class ASMInstruction {
       //Label
       default:{
         //[0000 0000][jjjj jjjj jjjj jjjj jjjj jjjj]
-        const labelLine = toBinaryOperand(this.operand1);
-        machineCode = `00000000${labelLine}`;
+        for(let i=0; i<this.operand1.value.length; i++){
+          if(this.operand1.value[i] === '('){
+            this.operand1.value = this.operand1.value.slice(0, i+1) + ')';
+          }
+        }
+        this.operand1.value = findInstructionNumber(LabelTable, this.operand1.value);
+        this.operand1.value = Number(this.operand1.value);
+        const instAddress = this.operand1.value.toString(2).padStart(24, '0');
+        machineCode = `00000000${instAddress}`;
         break;
       }
     }

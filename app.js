@@ -3,9 +3,15 @@
 
 function fillTable(table, data){
   let text = "<tr>";
-  for(let i=0; i<2048; i++){
+  for(let i=0; i<1024; i++){
     text += "<td>" + i + "</td>";
     text += "<td>" + data[i] + "</td>";
+    if(i%8 === 7)
+      text += "</tr><tr>";  //New row
+  }
+  for(let i=1024; i<2048; i++){
+    text += "<td><font color=\"red\">" + i + "</td>";
+    text += "<td><font color=\"red\">" + data[i] + "</td>";
     if(i%8 === 7)
       text += "</tr><tr>";  //New row
   }
@@ -45,7 +51,7 @@ function fillCache(table, cache) {
   table.innerHTML = text;
 }
 
-// not sure how memory is structured so 
+// not sure how memory is structured so
 function fillMemory(table, memory) {
   let text = '<tr><th>address</th><th>binary</th><th>dec</th></tr>';
   for (let i = 0; i < memory.length; i+=32) {
@@ -57,7 +63,7 @@ function fillMemory(table, memory) {
   table.innerHTML = text;
 }
 
-// not sure how memory is structured so 
+// not sure how memory is structured so
 function fillStack(table, stack) {
   let text = '';
   for (let i = 0; i < stack.length; i++) {
@@ -143,7 +149,7 @@ $(document).ready(function() {
     const labelTable = {}
     const allInstructions = parseAss(output,labelTable);
     const machineCodeStorage = translateInstructions(allInstructions, labelTable).join("");
-    computer = new Computer({ 
+    computer = new Computer({
       labelTable: labelTable,
       nway: cacheSpecs.nway,
       size: cacheSpecs.size,
@@ -154,7 +160,7 @@ $(document).ready(function() {
   });
   $('.button-step').click(function(){
     step(computer);
-    
+
     fillStatistics(document.getElementById('statistics'), computer.cpu.memory);
     fillRegisters(document.getElementById('registers'), computer.cpu.registers);
     fillCache(document.getElementById('cache'), computer.cpu.memory.cache);
