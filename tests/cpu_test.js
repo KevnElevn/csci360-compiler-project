@@ -6,26 +6,46 @@ describe("cpu", () => {
         const register = "00000010";
         const immediate = "0000010100111001";
         const instruction = `${opcode}${register}${immediate}`;
+        const labelTable = {0: 'main()'};
+        const computer = new Computer({
+          labelTable: labelTable,
+          nway: 1,
+          size: 4,
+          k: 2,
+        });
+        computer.cpu.execute(instruction);
 
-        const cpu = new CPU();
-        cpu.execute(instruction);
-
-        expect(cpu.getState()["registers"]["ecx"]).to.equal(1337);
+        expect(computer.cpu.getState()["registers"]["ecx"]).to.equal(1337);
       });
     });
 
     describe("movRegisterToMemory", () => {
-      it("can move eax to memory location 222", () => {
+      it("can move eax to memory, then memory to ebx", () => {
+        //reg to mem
         const opcode = "1000100111110000";
-        const register = "00000000";
-        const memory = intToNBytes(222, 1);
-        const instruction = `${opcode}${memory}${register}`
+        const register = "0000";
+        const memory = intToNNibbles(222,3);
+        const instruction = `${opcode}${memory}${register}`;
+        const labelTable = {0: 'main()'};
+        const computer = new Computer({
+          labelTable: labelTable,
+          nway: 1,
+          size: 4,
+          k: 2,
+        });
+        computer.virtualMemory.allocateStack(0);
+        computer.cpu.registers["eax"] = 1337;
+        computer.cpu.execute(instruction);
+        //console.log(computer.cpu.registers["ebx"]);
+        //mem to reg
+        const opcode2 = "1000101100001111";
+        const register2 = "0001";
+        const memory2 = intToNNibbles(222,3);
+        const instruction2 = `${opcode2}${register2}${memory2}`;
+        computer.cpu.execute(instruction2);
+        //console.log(computer.cpu.registers["ebx"]);
 
-        const cpu = new CPU();
-        cpu.registers["eax"] = 1337;
-        cpu.execute(instruction);
-
-        expect(cpu.memory.getDword(222)).to.equal("00000000000000000000010100111001")
+        expect(computer.cpu.registers["ebx"]).to.equal(1337)
       });
     });
   });
@@ -37,13 +57,18 @@ describe("cpu", () => {
         const register = "00000001";
         const immediate = intToNBytes(3, 2);
         const instruction = `${opcode}${register}${immediate}`;
+        const labelTable = {0: 'main()'};
+        const computer = new Computer({
+          labelTable: labelTable,
+          nway: 1,
+          size: 4,
+          k: 2,
+        });
 
-        const cpu = new CPU();
+        computer.cpu.registers["ebx"] = 7;
+        computer.cpu.execute(instruction);
 
-        cpu.registers["ebx"] = 7;
-        cpu.execute(instruction);
-
-        expect(cpu.getState()["registers"]["ebx"]).to.equal(10);
+        expect(computer.cpu.getState()["registers"]["ebx"]).to.equal(10);
       });
     });
 
@@ -53,13 +78,18 @@ describe("cpu", () => {
         const registerA = "00000000";
         const registerB = "00000001";
         const instruction = `${opcode}${registerA}${registerB}`;
+        const labelTable = {0: 'main()'};
+        const computer = new Computer({
+          labelTable: labelTable,
+          nway: 1,
+          size: 4,
+          k: 2,
+        });
+        computer.cpu.registers["eax"] = 100;
+        computer.cpu.registers["ebx"] = 36;
+        computer.cpu.execute(instruction);
 
-        const cpu = new CPU();
-        cpu.registers["eax"] = 100;
-        cpu.registers["ebx"] = 36;
-        cpu.execute(instruction);
-
-        expect(cpu.getState()["registers"]["eax"]).to.equal(136);
+        expect(computer.cpu.getState()["registers"]["eax"]).to.equal(136);
       });
     })
   });

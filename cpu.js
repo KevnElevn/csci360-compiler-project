@@ -130,6 +130,10 @@ function intToNBytes(integer, n) {
   return integer.toString(2).padStart(n * 8, "0");
 }
 
+function intToNNibbles(integer, n) {
+  return integer.toString(2).padStart(n * 4, "0");
+}
+
 class CPU {
   constructor(cache, LabelTable) {
     // integer values:
@@ -208,7 +212,7 @@ class CPU {
 
   label(instruction){
     return this.checkMatch(/^00000000(?<label>\d{24})$/, instruction, (values) => {
-
+      this.currentInstruction = this.LabelTable[parseInt(instruction, 2)];
     });
   }
 
@@ -261,7 +265,7 @@ class CPU {
     return this.checkMatch(/^11000010000000000000000000000000$/, instruction, (values) => {
 
       this.currentInstruction = `ret`;
-      this.stack.pop();
+      this.stack.pop();console.log("rsp" , this.registers['rsp']);
       this.registers['pc'] = parseInt(this.memory.getDword({address: this.registers['rsp']}), 2);
       this.registers['rsp'] += 4;
       if(this.stack.length === 0) {
@@ -521,7 +525,7 @@ class CPU {
     console.log("about to execute:", nextInstruction)
     this.execute(nextInstruction);
     console.log("that was:", this.currentInstruction);
-    this.registers["pc"] += 4;
+    this.registers["pc"] += 4; console.log("PC:",this.registers["pc"]);
   }
 
   getState() {

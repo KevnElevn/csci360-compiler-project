@@ -27,7 +27,7 @@ class VirtualMemory {
   // virtual memory: [0-3584: code], [4096 -> 3584] stack
   constructor(physicalMemory, externalStorage, pageSize) {
     this.physicalMemory = physicalMemory;
-    this.externalStorage = externalStorage;
+    this.externalStorage = externalStorage; //8192
     this.pageSize = pageSize; // number of dwords per page
 
     this.virtualAddressSpaceMax = 4096; // biggest virtual page number is 4096 / 16 - 1 = 255
@@ -152,14 +152,14 @@ class VirtualMemory {
   // 1000 1001 1011
   // \-------/ \--/
   //  vpage     offset
-  //  
+  //
   // virtual page index: 1000 1001
   // offset: 1011
-  // 
+  //
   // 1 page             = 4 dwords per page
   //                    = 4 instructions per page
   //                    = 16 bytes
-  // 
+  //
   // total virtual address space = 2 ^ 12 bytes = 4096 bytes = 1024 dwords
   // physical memory is 1024 bytes = 2^10
   // stack limit: 512 bytes (we always keep these pages around)
@@ -167,7 +167,7 @@ class VirtualMemory {
   //
   // 10 pages = 160 bytes = 40 instructions * 4 bytes/instruction
   // to fill up all the code pages, we need at least 512 bytes = 128 instructions
-  // 
+  //
   // total addressable code: 4096 bytes = 1024 dwords = 256 pages
 
   getVirtualPageIndex(virtualAddress) {

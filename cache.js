@@ -1,5 +1,5 @@
 class Cache {
-    /* 
+    /*
         nway: the degree of set association
         size: the size of each set (number of blocks)
         k: the size of a block
@@ -37,13 +37,13 @@ class Cache {
             // get the data minus the valid bit and the tags length
             const data = this.cache[setIndex][index][offset].data.substr(1+tag.length);
             this.updateTimes({ setIndex: setIndex, index: index, offset: offset });
-            this.recordAccess();
+            this.recordAccess(); console.log("WE GOOD");
             return data; // should return the data not the address
         }
         // pull from memory
         setIndex = this.lruReplacement({address: address}).setIndex
-        
-        const decimalAddress = this.toDecimal(address); // translate to decimal | WHAT PART OF THE ADDRESS 
+
+        const decimalAddress = this.toDecimal(address); // translate to decimal | WHAT PART OF THE ADDRESS
         const blockStartAddress = decimalAddress - 4*offset; // go to start of block
         let returnData = '';
         console.log("address:", address);
@@ -76,7 +76,7 @@ class Cache {
         if (setIndex >= 0) { // already in the cache, update it there
             this.cache[setIndex][index][offset].data = `${1}${tag}${data}`;
             this.recordAccess();
-        } else { // not in the cache, we need to bring it into the cache 
+        } else { // not in the cache, we need to bring it into the cache
             const {setIndex, offset} = this.lruReplacement({ address: address });
             this.cache[setIndex][index][offset].data = `${1}${tag}${data}`;
         }
@@ -96,7 +96,7 @@ class Cache {
          return -1;
     }
 
-    // Extracts info from bits given an address 
+    // Extracts info from bits given an address
     extractBits(address) {
         const index = this.getIndex(address);
         const offset = this.getOffset(address);
@@ -120,7 +120,7 @@ class Cache {
         return this.toDecimal(offsetBinary);
     }
 
-    // Returns the block index of an address in cache //  
+    // Returns the block index of an address in cache //
     getIndex(address) {
         return this.toDecimal(address) % this.size;
     }
@@ -159,7 +159,7 @@ class Cache {
             for (let j = 0; j < this.cache[i].length; j++)
                 for (let k = 0; k < this.cache[i][j].length; k++)
                     this.cache[i][j][k].time++;
-        
+
         if (setIndex != -1)this.cache[setIndex][index][offset].time = 0;
     }
 
@@ -183,7 +183,7 @@ class Cache {
 
     // miss rate function, what is the rate in which we are misses / reads and -- writes replacing / writes  //
     getMissRate() {
-        return this.statistics.misses / this.statistics.total; 
+        return this.statistics.misses / this.statistics.total;
     }
 
     // initializes 3D array for n-way set association
@@ -196,7 +196,7 @@ class Cache {
                             data: '0'.repeat(bits),
                             time: 0
                         }
-                    }))); 
+                    })));
     }
 
 }

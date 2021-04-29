@@ -115,8 +115,6 @@ function compile(tokens) {
   };
 }
 
-let computer = new Computer({ labelTable: {}, nway: 1, size: 2, k: 2 });
-
 function step(computer) {
   computer.cpu.step();
 }

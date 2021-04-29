@@ -11,7 +11,6 @@ class PhysicalMemory {
   getDword(address) {
     const dwordStart = address * 8;
     this.checkBounds(dwordStart);
-
     return this.storage.slice(dwordStart, dwordStart + 32);
   }
 
