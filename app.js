@@ -10,7 +10,7 @@ function fillTable(table, data){
       text += "</tr><tr>";  //New row
   }
   for(let i=1024; i<2048; i++){
-    text += "<td><font color=\"red\">" + i + "</td>";
+    text += "<td><font color=\"red\">" + `${i-1024}` + "</td>";
     text += "<td><font color=\"red\">" + data[i] + "</td>";
     if(i%8 === 7)
       text += "</tr><tr>";  //New row

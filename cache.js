@@ -31,13 +31,13 @@ class Cache {
 
     getDword({ address }) {
         address = address.toString(2).padStart(this.bits, 0);
-        let setIndex = this.isCacheHit(address);
+        let setIndex = this.isCacheHit(address); console.log(setIndex, "SETINDEX");
         const { index, offset, tag } = this.extractBits(address);
         if (setIndex >= 0) { // if it was found
             // get the data minus the valid bit and the tags length
             const data = this.cache[setIndex][index][offset].data.substr(1+tag.length);
             this.updateTimes({ setIndex: setIndex, index: index, offset: offset });
-            this.recordAccess(); console.log("WE GOOD");
+            this.recordAccess();
             return data; // should return the data not the address
         }
         // pull from memory
@@ -56,9 +56,9 @@ class Cache {
             if (b == offset) {
                 returnData = data;
             }
-            console.log("index", index)
-            console.log("setIndex", setIndex)
-            console.log("b", b)
+            console.log("setIndex", setIndex);
+            console.log("index", index);
+            console.log("b", b);
             this.cache[setIndex][index][b].data = `${1}${currentTag}${data}`;// load all into blocks
             this.cache[setIndex][index][b].time = 0;
         }
@@ -85,8 +85,12 @@ class Cache {
     }
 
     // searches n-way cache and returns the i'th cache if data exists in cache, else returns -1
-    isCacheHit(address) {
+    isCacheHit(address) {// console.log("cache.isCacheHit"); console.log("address: ", address);
         const { index, offset, tag, tagBits } = this.extractBits(address);
+        console.log("index: ", index);
+        console.log("offset: ", offset);
+        console.log("tag: ", tag);
+        console.log("tagBits: ", tagBits);
         for (let i = 0; i < this.cache.length; i++) {
             // start substring @ 1 to skip the valid bit, tagBits+1 to get whole tag
             const data = this.cache[i][index][offset].data;
@@ -98,10 +102,10 @@ class Cache {
 
     // Extracts info from bits given an address
     extractBits(address) {
-        const index = this.getIndex(address);
-        const offset = this.getOffset(address);
-        const indexBits = Math.log(this.size) / Math.log(2);
-        const offsetBits = Math.log(this.k) / Math.log(2);
+        const indexBits = Math.log2(this.size);
+        const offsetBits = Math.log2(this.k);
+        const index = this.getIndex(address, indexBits, offsetBits);
+        const offset = this.getOffset(address, offsetBits);
         const tagBits = address.length-indexBits-offsetBits;
         const tag = address.substring(0, tagBits);
         return { index: index, offset: offset, tag: tag, tagBits: tagBits };
@@ -112,17 +116,18 @@ class Cache {
         const offset = this.getOffset(address);
     }
 
-    getOffset(address) {
+    getOffset(address, offsetBits) {
         if (this.k == 1) {
             return 0;
         }
-        const offsetBinary = address.substring(address.length - (Math.log(this.k) / Math.log(2)));
+        const offsetBinary = address.substring(address.length - offsetBits);
         return this.toDecimal(offsetBinary);
     }
 
     // Returns the block index of an address in cache //
-    getIndex(address) {
-        return this.toDecimal(address) % this.size;
+    getIndex(address, indexBits, offsetBits) {
+      const indexBinary = address.substring(address.length - (indexBits + offsetBits), address.length - offsetBits);
+      return this.toDecimal(indexBinary);
     }
 
     toDecimal(address) {

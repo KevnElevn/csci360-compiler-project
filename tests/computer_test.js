@@ -13,16 +13,16 @@ describe("computer", () => {
     });
 
     c.loadProgram(machineCodeStorage); console.log(c.cpu.registers['pc'], "PC");
-    c.step();console.log(c.cpu.registers['pc'], "PC");
-    c.step();console.log(c.cpu.registers['pc'], "PC");
-    c.step();console.log(c.cpu.registers['pc'], "PC");
-    c.step();console.log(c.cpu.registers['pc'], "PC");
-    c.step();console.log(c.cpu.registers['pc'], "PC");
-    c.step();console.log(c.cpu.registers['pc'], "PC");
-    c.step();console.log(c.cpu.registers['pc'], "PC");
-    c.step();console.log(c.cpu.registers['pc'], "PC");
-    c.step();console.log(c.cpu.registers['pc'], "PC");
-    c.step();console.log(c.cpu.registers['pc'], "PC");
+    c.step();console.log(c.cpu.stack);
+    c.step();console.log(c.cpu.stack);
+    c.step();console.log(c.cpu.stack);
+    c.step();console.log(c.cpu.stack);
+    c.step();console.log(c.cpu.stack);
+    c.step();console.log(c.cpu.stack);
+    c.step();console.log(c.cpu.stack);
+    c.step();console.log(c.cpu.stack);
+    c.step();console.log(c.cpu.stack);
+    c.step();console.log(c.cpu.stack);
 
     // console.log("stack", c.cache.memory.physicalMemory.storage);
     // console.log("stack", c.cache.memory.getDword(0, 4092));

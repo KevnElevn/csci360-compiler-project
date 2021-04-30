@@ -96,7 +96,7 @@ class Computer {
 
   start() {
     const startAddress = swap(this.cpu.LabelTable)["main()"];
-    console.log("start", (startAddress - 1) * 4)
+    console.log("start", (startAddress) * 4)
     this.cpu.registers["pc"] = (startAddress) * 4;
   }
 
@@ -265,7 +265,7 @@ class CPU {
     return this.checkMatch(/^11000010000000000000000000000000$/, instruction, (values) => {
 
       this.currentInstruction = `ret`;
-      this.stack.pop();console.log("rsp" , this.registers['rsp']);
+      this.stack.pop();
       this.registers['pc'] = parseInt(this.memory.getDword({address: this.registers['rsp']}), 2);
       this.registers['rsp'] += 4;
       if(this.stack.length === 0) {
@@ -520,12 +520,12 @@ class CPU {
   }
   // TODO: test me
   step() {
-    console.log("state", this.getState())
+    console.log("state", this.getState());
     const nextInstruction = this.memory.getDword({address: this.registers["pc"]});
     console.log("about to execute:", nextInstruction)
     this.execute(nextInstruction);
     console.log("that was:", this.currentInstruction);
-    this.registers["pc"] += 4; console.log("PC:",this.registers["pc"]);
+    this.registers["pc"] += 4;
   }
 
   getState() {
