@@ -70,7 +70,7 @@ class VirtualMemory {
       };
 
      // read from physical memory
-     return this.physicalMemory.getDword(physicalPageIndex * this.pageSize + pageOffset);
+     return this.physicalMemory.getDword((physicalPageIndex * this.pageSize * 4) + pageOffset);
     }
   }
 

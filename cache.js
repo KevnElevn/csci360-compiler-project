@@ -31,15 +31,17 @@ class Cache {
 
     getDword({ address }) {
         address = address.toString(2).padStart(this.bits, 0);
-        let setIndex = this.isCacheHit(address); console.log(setIndex, "SETINDEX");
+        let setIndex = this.isCacheHit(address);
         const { index, offset, tag } = this.extractBits(address);
         if (setIndex >= 0) { // if it was found
             // get the data minus the valid bit and the tags length
+            console.log('Cache hit');
             const data = this.cache[setIndex][index][offset].data.substr(1+tag.length);
             this.updateTimes({ setIndex: setIndex, index: index, offset: offset });
             this.recordAccess();
             return data; // should return the data not the address
         }
+        console.log('Cache miss');
         // pull from memory
         setIndex = this.lruReplacement({address: address}).setIndex
 
@@ -85,12 +87,8 @@ class Cache {
     }
 
     // searches n-way cache and returns the i'th cache if data exists in cache, else returns -1
-    isCacheHit(address) {// console.log("cache.isCacheHit"); console.log("address: ", address);
+    isCacheHit(address) {
         const { index, offset, tag, tagBits } = this.extractBits(address);
-        console.log("index: ", index);
-        console.log("offset: ", offset);
-        console.log("tag: ", tag);
-        console.log("tagBits: ", tagBits);
         for (let i = 0; i < this.cache.length; i++) {
             // start substring @ 1 to skip the valid bit, tagBits+1 to get whole tag
             const data = this.cache[i][index][offset].data;
@@ -102,6 +100,10 @@ class Cache {
 
     // Extracts info from bits given an address
     extractBits(address) {
+        //4 Byte addressable system, so the last 2 bits of addresses don't change
+        const byteAddressable = 4;
+        //Remove the right-most 2 zeros for processing
+        address = address.substring(0, address.length - (Math.log2(byteAddressable)));
         const indexBits = Math.log2(this.size);
         const offsetBits = Math.log2(this.k);
         const index = this.getIndex(address, indexBits, offsetBits);
