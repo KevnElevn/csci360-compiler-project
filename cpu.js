@@ -219,7 +219,7 @@ class CPU {
   lea(instruction){
     return this.checkMatch(/^1000110100001111(?<register>\d{4})(?<address>\d{12})$/, instruction, (values) => {
       const register = BINARY_TO_REGISTER[values["register"]];
-      const address = this.registers['rbp'] + parseInt(values["address"], 2);
+      const address = this.registers['rbp'] - parseInt(values["address"], 2);
 
       this.currentInstruction = `lea ${register}, DWORD[rbp - ${parseInt(values["address"], 2)}]`;
       this.registers[register] = address;
@@ -321,8 +321,7 @@ class CPU {
       const address = this.registers[BINARY_TO_REGISTER[values["baseAddrRegister"]]]
                     + (4*this.registers[BINARY_TO_REGISTER[values["offsetRegister"]]]);
 
-      this.currentInstruction = `mov ${registerName}, DWORD[${BINARY_TO_REGISTER[values["baseAddrRegister"]]}+4*
-                                                            ${BINARY_TO_REGISTER[values["offsetRegister"]]}]`;
+      this.currentInstruction = `mov ${registerName}, DWORD[${BINARY_TO_REGISTER[values["baseAddrRegister"]]}+4*${BINARY_TO_REGISTER[values["offsetRegister"]]}]`;
       const value = parseInt(this.memory.getDword({address: address}), 2);
       this.registers[registerName] = value;
     });
@@ -475,7 +474,7 @@ class CPU {
       const instructionLocation = parseInt(values["instructionLocation"],2);
       const labelName = this.LabelTable[instructionLocation];
       this.currentInstruction = `jmp ${labelName}`;
-      this.registers["pc"] = instructionLocation;
+      this.registers["pc"] = instructionLocation * 4;
     });
   }
 
@@ -488,32 +487,32 @@ class CPU {
         case '1111'://jg
           this.currentInstruction = `jg ${labelName}`;
           if(this.registers["zf"] === 0 && this.registers["sf"] === 0)
-            this.registers["pc"] = instructionLocation;
+            this.registers["pc"] = instructionLocation * 4;
           break;
         case '1101'://jge
           this.currentInstruction = `jge ${labelName}`;
           if(this.registers["zf"] === 1 || this.registers["sf"] === 0)
-            this.registers["pc"] = instructionLocation;
+            this.registers["pc"] = instructionLocation * 4;
           break;
         case '1100'://jl
           this.currentInstruction = `jl ${labelName}`;
           if(this.registers["zf"] === 0 && this.registers["sf"] === 1)
-            this.registers["pc"] = instructionLocation;
+            this.registers["pc"] = instructionLocation * 4;
           break;
         case '1110'://jle
           this.currentInstruction = `jle ${labelName}`;
           if(this.registers["zf"] === 1 || this.registers["sf"] === 1)
-            this.registers["pc"] = instructionLocation;
+            this.registers["pc"] = instructionLocation * 4;
           break;
         case '0100'://je
           this.currentInstruction = `je ${labelName}`;
           if(this.registers["zf"] === 1)
-            this.registers["pc"] = instructionLocation;
+            this.registers["pc"] = instructionLocation * 4;
           break;
         case '0101'://jne
           this.currentInstruction = `jne ${labelName}`;
           if(this.registers["zf"] === 0)
-            this.registers["pc"] = instructionLocation;
+            this.registers["pc"] = instructionLocation * 4;
           break;
       }
     });
