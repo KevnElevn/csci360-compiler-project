@@ -70,8 +70,8 @@ describe("cache", () => {
             // initalize a small cache
             const cache = new Cache({ nway: 1, size: 2, k: 1, memory: vm, bits: 12 });
             // initialize two addresses that map to the same index and offset
-            const address = '111111111010';
-            const otherAddress = '111111111000';
+            const address = '111111110100';
+            const otherAddress = '111101110100';
             // initialize different data that maps to the same set, index, and offset
             const data = '00000000000000000000000000000001';
             const otherData = '01000000000000000000000000000010';

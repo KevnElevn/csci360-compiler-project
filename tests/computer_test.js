@@ -13,19 +13,16 @@ describe("computer", () => {
     });
 
     c.loadProgram(machineCodeStorage); console.log(c.cpu.registers['pc'], "PC");
-    c.step();console.log(c.cpu.stack);
-    c.step();console.log(c.cpu.stack);
-    c.step();console.log(c.cpu.stack);
-    c.step();console.log(c.cpu.stack);
-    c.step();console.log(c.cpu.stack);
-    c.step();console.log(c.cpu.stack);
-    c.step();console.log(c.cpu.stack);
-    c.step();console.log(c.cpu.stack);
-    c.step();console.log(c.cpu.stack);
-    c.step();console.log(c.cpu.stack);
-
-    // console.log("stack", c.cache.memory.physicalMemory.storage);
-    // console.log("stack", c.cache.memory.getDword(0, 4092));
+    c.step();
+    c.step();
+    c.step();
+    c.step();
+    c.step();
+    c.step();
+    c.step();
+    c.step();
+    c.step();
+    c.step();
   });
 
   it("runs the max finding program", () => {
@@ -49,10 +46,15 @@ describe("computer", () => {
 
     const tokens = tokenize(code);
     const {parseTree, output} = compile(tokens);
-    const LabelTable = {}
-    const allInstructions = parseAss(output, LabelTable);
-    const machineCodeStorage = translateInstructions(allInstructions, LabelTable).join("");
-    const c = new Computer(LabelTable);
+    const labelTable = {}
+    const allInstructions = parseAss(output, labelTable);
+    const machineCodeStorage = translateInstructions(allInstructions, labelTable).join("");
+    const c = new Computer({
+      labelTable: labelTable,
+      nway: 1,
+      size: 4,
+      k: 2,
+    });
 
     console.log(machineCodeStorage)
     c.loadProgram(machineCodeStorage);

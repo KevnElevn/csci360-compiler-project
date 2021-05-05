@@ -254,7 +254,7 @@ class CPU {
       const labelName = this.LabelTable[instructionLocation];
 
       this.currentInstruction = `call ${labelName}`;
-      this.stack.push(`Return Address: ${this.registers['pc']} \n ${labelName}`);
+      this.stack.push(`Return Address: ${this.registers['pc']}`);
       this.registers['rsp'] -= 4;
       this.memory.setDword({address: this.registers['rsp'], data: intToNBytes(this.registers['pc'], 4)});
       this.registers['pc'] = instructionLocation;
@@ -265,12 +265,20 @@ class CPU {
     return this.checkMatch(/^11000010000000000000000000000000$/, instruction, (values) => {
 
       this.currentInstruction = `ret`;
+      while(!this.stack[this.stack.length - 1].includes('rbp:')) {
+        this.stack.pop();
+        this.registers['rsp'] += 4;
+      }
+      this.registers['rbp'] = parseInt(this.memory.getDword({address: this.registers['rsp']}),2);
       this.stack.pop();
+      this.registers['rsp'] += 4;
+      if(this.stack.length === 0){
+        this.currentInstruction = 'Program complete!';
+        return 0;
+      }
       this.registers['pc'] = parseInt(this.memory.getDword({address: this.registers['rsp']}), 2);
       this.registers['rsp'] += 4;
-      if(this.stack.length === 0) {
-        throw new Error("end of program?");
-      }
+      this.stack.pop();
     });
   }
 
@@ -281,12 +289,6 @@ class CPU {
 
       this.currentInstruction = `mov ${registerNameA}, ${registerNameB}`;
       this.registers[registerNameA] = this.registers[registerNameB];
-
-      // suspicious of this:
-      if(registerNameA === 'rsp' && registerNameB === 'rbp'){
-        while(!this.stack[this.stack.length - 1].includes('rbp'))
-          this.stack.pop();
-      }
     });
   }
 
@@ -377,9 +379,13 @@ class CPU {
       this.registers[registerName] -= immediateInt;
 
       if(registerName === 'rsp'){
-        while(immediateInt >= 0){
-          this.stack.push(`DWORD[rbp - ${immediateInt}]`);
+        let newVars = [];
+        while(immediateInt > 0){
+          newVars.push(`DWORD[rbp - ${immediateInt}]`);
           immediateInt -= 4;
+        }
+        for(let i=newVars.length-1; i>=0; i--) {
+            this.stack.push(newVars[i]);
         }
       }
     });
@@ -519,12 +525,14 @@ class CPU {
   }
   // TODO: test me
   step() {
-    console.log("state", this.getState());
-    const nextInstruction = this.memory.getDword({address: this.registers["pc"]});
-    console.log("about to execute:", nextInstruction)
-    this.execute(nextInstruction);
-    console.log("that was:", this.currentInstruction);
-    this.registers["pc"] += 4;
+    if(this.currentInstruction !== 'Program complete!') {
+      console.log("state", this.getState());
+      const nextInstruction = this.memory.getDword({address: this.registers["pc"]});
+      console.log("about to execute:", nextInstruction)
+      this.execute(nextInstruction);
+      console.log("that was:", this.currentInstruction);
+      this.registers["pc"] += 4;
+    }
   }
 
   getState() {

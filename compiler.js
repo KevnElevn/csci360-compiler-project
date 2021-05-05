@@ -369,7 +369,6 @@ class Function extends Node {
     const childInstructions = this.statements.map(s => s.toAssembly(symbolTable)).flat();
     instructions = instructions.concat(childInstructions);
 
-    instructions.push("pop rbp");
     instructions.push("ret");
     return instructions;
   }
