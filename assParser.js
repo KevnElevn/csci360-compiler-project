@@ -356,6 +356,7 @@ function parseAss(assembly, LabelTable) {
       LabelTable[i] = labelName;  //Record the label name and line number
     }
     for(let j = 1; j<line.length; j++){
+      let operand = {};
       if(line[j].includes(','))
         line[j] = line[j].substring(0, line[j].length-1);
       if(Registers.hasOwnProperty(line[j]))//It's a register
@@ -365,11 +366,11 @@ function parseAss(assembly, LabelTable) {
         if(line[j].includes(','))
           line[j] = line[j].substring(0, line[j].length-1);
         if(!line[j].includes('+4*')){//rbp-4
-          addressOffset = line[j].slice(5, line[j].length-1);
+          const addressOffset = line[j].slice(5, line[j].length-1);
           operand = memoryOperand(addressOffset);
         }
         else {//rcx+4*rdx
-          address = line[j].slice(1, line[j].length-1);
+          const address = line[j].slice(1, line[j].length-1);
           operand = memoryOperand(address);
         }
       }

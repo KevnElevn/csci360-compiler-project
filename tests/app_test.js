@@ -9,7 +9,6 @@ mov rbp, rsp
 sub rsp, 4
 mov DWORD PTR [rbp-4], 3
 mov eax, DWORD PTR [rbp-4]
-pop rbp
 ret
 `;
 
